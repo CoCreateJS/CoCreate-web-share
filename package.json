@@ -1,0 +1,44 @@
+{
+  "name": "@cocreate/web-share",
+  "version": "1.0.0",
+  "description": "Declarative access to the browser Web Share API.",
+  "keywords": [
+    "web-share",
+    "sharing",
+    "browser-api",
+    "low-code",
+    "realtime-framework",
+    "html5-framework"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "start": "webpack --config webpack.config.js",
+    "build": "webpack --mode=production --config webpack.config.js",
+    "dev": "webpack --config webpack.config.js --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CoCreateJS/CoCreate-web-share.git"
+  },
+  "author": "CoCreate LLC",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/CoCreateJS/CoCreate-web-share/issues"
+  },
+  "homepage": "https://cocreate.app/docs/web-share",
+  "main": "./src/index.js",
+  "dependencies": {
+    "@cocreate/actions": "^1.27.0",
+    "@cocreate/observer": "^1.25.0"
+  },
+  "devDependencies": {
+    "@cocreate/webpack": "^1.9.0"
+  },
+  "allowScripts": {
+    "@cocreate/actions@1.27.0": true,
+    "@cocreate/observer@1.25.0": true,
+    "@cocreate/webpack@1.9.0": true
+  }
+}
