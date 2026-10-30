@@ -58,7 +58,7 @@ function init(root = document) {
 	}
 }
 
-function getShareData(element) {
+function getShareData(element, { requireFiles = true } = {}) {
 	const data = {
 		title: element.getAttribute("share-title") || document.title,
 		text:
@@ -74,10 +74,24 @@ function getShareData(element) {
 	const fileTargets = queryElements({ element, prefix: "share-files" });
 	const files = fileTargets.flatMap((target) => Array.from(target.files || []));
 	if (files.length) data.files = files;
-	else if (element.hasAttribute("share-files-query")) {
+	else if (element.hasAttribute("share-files-query") && requireFiles) {
 		throw new Error("Select at least one file to share.");
+	} else if (element.hasAttribute("share-files-query")) {
+		return null;
 	}
 	return data;
+}
+
+function canShare(element) {
+	if (
+		!element ||
+		typeof navigator === "undefined" ||
+		typeof navigator.canShare !== "function"
+	)
+		return false;
+
+	const data = getShareData(element, { requireFiles: false });
+	return Boolean(data && navigator.canShare(data));
 }
 
 async function share(element) {
@@ -87,13 +101,6 @@ async function share(element) {
 	}
 
 	const data = getShareData(element);
-	if (
-		data.files &&
-		typeof navigator.canShare === "function" &&
-		!navigator.canShare({ files: data.files })
-	) {
-		throw new Error("This browser or device cannot share the selected files.");
-	}
 	return navigator.share(data);
 }
 
@@ -119,8 +126,21 @@ Observer.init({
 
 Actions.init({
 	name: "share",
-	callback: async ({ element, end, abort }) => {
+	callback: async ({ element, method, end, abort }) => {
 		try {
+			if (method === "canShare") {
+				const supported = canShare(element);
+				if (!supported) {
+					abort(new Error("This browser or device cannot share this data."));
+					return;
+				}
+				end({ canShare: supported });
+				return;
+			}
+
+			if (method && method !== "share")
+				throw new Error(`Unsupported share action: ${method}.`);
+
 			await share(element);
 			end();
 		} catch (error) {
@@ -132,5 +152,5 @@ Actions.init({
 
 init();
 
-export { init, share };
-export default { init, share };
+export { init, share, canShare };
+export default { init, share, canShare };

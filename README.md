@@ -34,7 +34,15 @@ Use either the `share` attribute or the `share` action on a control, not both. U
 </button>
 ```
 
-The action continues when the share promise resolves or when the user cancels. The API does not report the selected destination or confirm delivery. Unsupported APIs and other failures abort the action chain. Keep `share` as the first action so it remains within the browser's user-activation window. Direct `[share]` failures dispatch a bubbling `shareError` event; user cancellation is not treated as an error.
+To pre-check the same payload before sharing, put `share.canShare` first in the action chain:
+
+```html
+<button actions="share.canShare, share" share-title="A page" share-url="https://example.com">
+	Share if supported
+</button>
+```
+
+`share.canShare` continues the chain when the browser returns `true` and aborts when it returns `false`. It also fails the check when `navigator.canShare()` is unavailable. This is only a pre-check; the subsequent `share` action can still fail. The share action continues when the share promise resolves or when the user cancels. The API does not report the selected destination or confirm delivery. Keep `share` as the first user-activation-consuming action. Direct `[share]` failures dispatch a bubbling `shareError` event; user cancellation is not treated as an error.
 
 ### Share selected files
 

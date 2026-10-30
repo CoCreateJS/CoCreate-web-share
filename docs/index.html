@@ -16,8 +16,8 @@
         <p>To share selected files, keep the file picker separate and point the share button at it with <code>share-files-query</code>:</p>
         <pre><code>&lt;input id="files-to-share" type="file" accept="image/*" multiple&gt;
 &lt;button share share-files-query="$document #files-to-share"&gt;Share selected files&lt;/button&gt;</code></pre>
-        <p>Or use <code>actions="share"</code> to run sharing in an action chain. Place it first in the chain to preserve the browser's user-activation window.</p>
-        <pre><code>&lt;button actions="share" share-title="A page" share-url="https://example.com"&gt;Share&lt;/button&gt;</code></pre>
+        <p>Or use <code>actions="share"</code> to run sharing in an action chain. Add <code>share.canShare</code> before <code>share</code> to pre-check the payload; it continues on <code>true</code> and aborts on <code>false</code>. The actual share still requires a user action.</p>
+        <pre><code>&lt;button actions="share.canShare, share" share-title="A page" share-url="https://example.com"&gt;Share if supported&lt;/button&gt;</code></pre>
         <p><a href="/docs/web-share/demo">Open the demo</a></p>
     </main>
 </body>
