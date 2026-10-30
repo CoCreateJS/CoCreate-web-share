@@ -8,9 +8,42 @@
 <body>
     <main>
         <h1>Web Share demo</h1>
-        <p>Use the share attribute or the share action to open the browser or device share sheet. It must be called from a user gesture and is available only where the browser supports it.</p>
+        <p>These examples open your device's native share sheet. Choose a destination in that sheet; the page does not select one for you.</p>
 
-        <button share share-title="CoCreate Web Share" share-text="Testing the Web Share API" share-url="https://cocreate.app">Share</button>
+        <section>
+            <h2>Share a link and text</h2>
+            <button type="button" share share-title="CoCreate Web Share" share-text="Testing the Web Share API" share-url="https://cocreate.app">Share page</button>
+            <a href="https://cocreate.app/docs" share share-title="CoCreate documentation">Share this link</a>
+        </section>
+
+        <section>
+            <h2>Share selected files</h2>
+            <label for="files-to-share">Choose images</label>
+            <input id="files-to-share" type="file" accept="image/*" multiple>
+            <button
+                type="button"
+                share
+                share-title="Selected images"
+                share-text="Images from CoCreate Web Share"
+                share-files-query="$document #files-to-share">
+                Share selected files
+            </button>
+            <p>Select images first, then click Share selected files.</p>
+        </section>
+
+        <section>
+            <h2>Share through an action</h2>
+            <button
+                type="button"
+                actions="share"
+                share-title="CoCreate Web Share action"
+                share-text="Testing actions=share"
+                share-url="https://cocreate.app">
+                Share with action
+            </button>
+        </section>
+
+        <p>The share sheet must be opened directly from a user action. Dismissing it cancels sharing. The browser does not tell this page which destination you picked.</p>
 
     </main>
     <script src="../dist/CoCreate-web-share.js"></script>

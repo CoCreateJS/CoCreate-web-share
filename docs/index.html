@@ -9,9 +9,15 @@
 <body>
     <main>
         <h1>Web Share</h1>
-        <p>Use the share attribute or the share action to open the browser or device share sheet. It must be called from a user gesture and is available only where the browser supports it.</p>
+        <p>Open the device's native share sheet with a URL and text. The user chooses an available destination. The share sheet must be opened directly from a user action, and support depends on the browser and device.</p>
         <h2>Usage</h2>
         <pre><code>&lt;button share share-title="A page" share-text="Take a look" share-url="https://example.com"&gt;Share&lt;/button&gt;</code></pre>
+        <p>On an anchor, the share trigger shares its <code>href</code> by default and prevents navigation. Set <code>share-url</code> to override it. A button defaults to the current page URL.</p>
+        <p>To share selected files, keep the file picker separate and point the share button at it with <code>share-files-query</code>:</p>
+        <pre><code>&lt;input id="files-to-share" type="file" accept="image/*" multiple&gt;
+&lt;button share share-files-query="$document #files-to-share"&gt;Share selected files&lt;/button&gt;</code></pre>
+        <p>Or use <code>actions="share"</code> to run sharing in an action chain. Place it first in the chain to preserve the browser's user-activation window.</p>
+        <pre><code>&lt;button actions="share" share-title="A page" share-url="https://example.com"&gt;Share&lt;/button&gt;</code></pre>
         <p><a href="/docs/web-share/demo">Open the demo</a></p>
     </main>
 </body>

@@ -1,4 +1,3 @@
-// https://web.dev/web-share-target/
 /********************************************************************************
  * Copyright (C) 2023 CoCreate and Contributors.
  *
@@ -23,68 +22,115 @@
  * For details, visit <https://cocreate.app/licenses/> or contact us at sales@cocreate.app.
  */
 
-import Observer from "@cocreate/observer";
 import Actions from "@cocreate/actions";
+import { queryElements } from "@cocreate/utils";
+import Observer from "@cocreate/observer";
 
 const selector = "[share]";
+const initializedElements = new WeakSet();
 
-async function init(element) {
-	if (
-		element &&
-		!(element instanceof HTMLCollection) &&
-		!Array.isArray(element)
-	)
-		element = [element];
-	else if (!element) {
-		element = document.querySelectorAll(selector);
+function collectShareElements(root, elements = new Set()) {
+	if (!root) return elements;
+
+	if (root.matches?.(selector)) elements.add(root);
+	if (root.querySelectorAll) {
+		for (const element of root.querySelectorAll(selector)) elements.add(element);
+		return elements;
 	}
 
-	for (let i = 0; i < element.length; i++)
-		element[i].addEventListener("click", function (e) {
-			share(e.target);
-		});
+	if (root[Symbol.iterator]) {
+		for (const item of root) collectShareElements(item, elements);
+	}
+	return elements;
 }
 
-function share(element) {
-	if (navigator.share && element) {
-		let title = element.getAttribute("share-title") || document.title;
-		let text =
+function init(root = document) {
+	for (const element of collectShareElements(root)) {
+		if (initializedElements.has(element)) continue;
+		initializedElements.add(element);
+		element.addEventListener("click", (event) => {
+			const shareElement = event.currentTarget;
+			event.preventDefault();
+			share(shareElement).catch((error) =>
+				handleShareError(shareElement, error)
+			);
+		});
+	}
+}
+
+function getShareData(element) {
+	const data = {
+		title: element.getAttribute("share-title") || document.title,
+		text:
 			element.getAttribute("share-text") ||
 			document.querySelector('meta[name="description"]')?.content ||
-			"";
-		let url = element.getAttribute("share-url") || window.location.href;
+			"",
+		url:
+			element.getAttribute("share-url") ||
+			element.href ||
+			window.location.href
+	};
 
-		navigator
-			.share({
-				title: title,
-				text: text,
-				url: url
-			})
-			.then(() => console.log("Successful share"))
-			.catch((error) => console.log("Error sharing", error));
-	} else {
-		console.log(
-			"Web Share API is not supported or element is not provided."
-		);
+	const fileTargets = queryElements({ element, prefix: "share-files" });
+	const files = fileTargets.flatMap((target) => Array.from(target.files || []));
+	if (files.length) data.files = files;
+	else if (element.hasAttribute("share-files-query")) {
+		throw new Error("Select at least one file to share.");
 	}
+	return data;
+}
+
+async function share(element) {
+	if (!element) throw new Error("A share element is required.");
+	if (typeof navigator.share !== "function") {
+		throw new Error("The Web Share API is not supported in this browser.");
+	}
+
+	const data = getShareData(element);
+	if (
+		data.files &&
+		typeof navigator.canShare === "function" &&
+		!navigator.canShare({ files: data.files })
+	) {
+		throw new Error("This browser or device cannot share the selected files.");
+	}
+	return navigator.share(data);
+}
+
+function handleShareError(element, error) {
+	// Dismissing the native share sheet is a normal user choice.
+	if (error?.name === "AbortError") return;
+
+	element?.dispatchEvent(
+		new CustomEvent("shareError", {
+			bubbles: true,
+			detail: { error }
+		})
+	);
+	console.error("Web Share failed:", error);
 }
 
 Observer.init({
 	name: "webshare",
 	types: ["addedNodes"],
-	selector: "[share]",
-	callback: (mutation) => {
-		init(mutation.target);
-	}
+	selector,
+	callback: (mutation) => init(mutation.target)
 });
 
 Actions.init({
 	name: "share",
-	callback: (action) => {
-		share(action.element);
+	callback: async ({ element, end, abort }) => {
+		try {
+			await share(element);
+			end();
+		} catch (error) {
+			if (error?.name === "AbortError") end({ cancelled: true });
+			else abort(error);
+		}
 	}
 });
 
 init();
 
-export default { init };
+export { init, share };
+export default { init, share };
