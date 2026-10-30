@@ -13,6 +13,47 @@
   "publishConfig": {
     "access": "public"
   },
+  "cocreate": {
+    "environment": [
+      "client"
+    ],
+    "interface": {
+      "schemaVersion": 1,
+      "summary": "Declarative access to the browser Web Share API.",
+      "source": "src/index.js",
+      "declarative": {
+        "selectors": [
+          "[share]"
+        ],
+        "attributes": [
+          {
+            "name": "share-files-query"
+          },
+          {
+            "name": "share-text"
+          },
+          {
+            "name": "share-title"
+          },
+          {
+            "name": "share-url"
+          }
+        ],
+        "actions": [
+          {
+            "name": "share"
+          }
+        ]
+      },
+      "api": {
+        "exports": [
+          "canShare",
+          "init",
+          "share"
+        ]
+      }
+    }
+  },
   "scripts": {
     "start": "webpack --config webpack.config.js",
     "build": "webpack --mode=production --config webpack.config.js",
