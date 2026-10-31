@@ -8,7 +8,7 @@ Declarative access to the browser Web Share API.
 yarn add @cocreate/web-share
 ```
 
-Or load the browser bundle from `https://cdn.cocreate.app/web-share/latest/CoCreate-web-share.min.js`.
+Or load the browser bundle from `https://cdn.CoCreateJS.com/web-share/latest/CoCreate-web-share.min.js`.
 
 ## Usage
 

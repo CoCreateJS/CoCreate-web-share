@@ -68,7 +68,7 @@
   "bugs": {
     "url": "https://github.com/CoCreateJS/CoCreate-web-share/issues"
   },
-  "homepage": "https://cocreate.app/docs/web-share",
+  "homepage": "https://CoCreateJS.com/docs/web-share",
   "main": "./src/index.js",
   "dependencies": {
     "@cocreate/actions": "^1.27.0",

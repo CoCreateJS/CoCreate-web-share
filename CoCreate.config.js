@@ -11,7 +11,7 @@ module.exports = {
                 path: "/docs/web-share",
                 pathname: "/docs/web-share/index.html",
                 src: "{{./docs/index.html}}",
-                host: ["cocreate.app", "general.cocreate.app"],
+                host: ["CoCreateJS.com", "general.CoCreateJS.com"],
                 directory: "web-share",
                 "content-type": "{{content-type}}",
                 public: "true"
