@@ -44,6 +44,11 @@ function collectShareElements(root, elements = new Set()) {
 	return elements;
 }
 
+/**
+ *
+ * @public
+ * @environment client
+ */
 function init(root = document) {
 	for (const element of collectShareElements(root)) {
 		if (initializedElements.has(element)) continue;
@@ -82,6 +87,11 @@ function getShareData(element, { requireFiles = true } = {}) {
 	return data;
 }
 
+/**
+ *
+ * @public
+ * @environment client
+ */
 function canShare(element) {
 	if (
 		!element ||
@@ -94,6 +104,11 @@ function canShare(element) {
 	return Boolean(data && navigator.canShare(data));
 }
 
+/**
+ *
+ * @public
+ * @environment client
+ */
 async function share(element) {
 	if (!element) throw new Error("A share element is required.");
 	if (typeof navigator.share !== "function") {
@@ -154,3 +169,74 @@ init();
 
 export { init, share, canShare };
 export default { init, share, canShare };
+
+/**
+ *
+ * @name share-files-query
+ * @kind member
+ * @attribute
+ * @environment client
+ */
+
+/**
+ *
+ * @name share-text
+ * @kind member
+ * @attribute
+ * @environment client
+ */
+
+/**
+ *
+ * @name share-title
+ * @kind member
+ * @attribute
+ * @environment client
+ */
+
+/**
+ *
+ * @name share-url
+ * @kind member
+ * @attribute
+ * @environment client
+ */
+
+/**
+ * Declarative access to the browser Web Share API.
+ *
+ * @module web-share
+ * @environment client
+ */
+
+/**
+ * Declarative selectors recognized by this module.
+ *
+ * @name declarative-selectors
+ * @kind member
+ * @selectors
+ * @environment client
+ * @example
+ * ```json
+ * [
+ *   "[share]"
+ * ]
+ * ```
+ */
+
+/**
+ * Declarative actions supported or registered by this module.
+ *
+ * @name declarative-actions
+ * @kind member
+ * @actions
+ * @environment client
+ * @example
+ * ```json
+ * [
+ *   {
+ *     "name": "share"
+ *   }
+ * ]
+ * ```
+ */
